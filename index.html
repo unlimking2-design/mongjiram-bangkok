@@ -83,6 +83,25 @@ textarea{min-height:70px;resize:vertical}
 .btn.danger{color:var(--danger);border-color:var(--danger)}
 .btn.danger.armed{background:var(--danger);color:#fff}
 .err{color:var(--danger);font-size:13px}
+.hotel{display:grid;gap:10px}
+.hotel-card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;gap:10px}
+.hotel-card h3{font-family:var(--display);font-size:18px;margin:0}
+.hotel-card .sub{font-size:13px;color:var(--muted);margin-top:-6px}
+dl.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0;font-size:14px}
+dl.facts dt{color:var(--muted);font-size:12px;padding-top:2px;white-space:nowrap}
+dl.facts dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.hotel-card a{color:var(--river);font-weight:600}
+:root[data-theme="dark"] .hotel-card a{color:var(--marigold)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hotel-card a{color:var(--marigold)}}
+.mem{cursor:pointer;font:inherit;color:inherit;text-align:left;width:100%}
+.mem:hover{border-color:var(--marigold)}
+.fl{display:grid;gap:10px}
+.leg{border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:4px;background:var(--bg)}
+.leg .lab{font-size:12px;color:var(--muted)}
+.leg .no{font-family:var(--mono);font-size:18px;font-weight:500}
+.leg .route{font-variant-numeric:tabular-nums;font-size:15px}
+.leg .det{font-size:13px;color:var(--muted);white-space:pre-wrap}
+.leg.none .no{color:var(--marigold);font-family:var(--body);font-size:15px;font-weight:600}
 .crew{display:grid;gap:10px}
 .crew-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
 .crew-head h2{font-family:var(--display);font-size:20px;margin:0}
@@ -121,8 +140,12 @@ ul.members{list-style:none;margin:0;padding:0;display:grid;grid-template-columns
     <span class="status" id="status"></span>
   </div>
   <section class="crew" aria-labelledby="crewTitle">
-    <div class="crew-head"><h2 id="crewTitle">참가자<span id="crewCount"></span></h2><span class="status" id="crewNote" hidden>이름을 누르면 합류·귀국일을 고칠 수 있습니다.</span></div>
+    <div class="crew-head"><h2 id="crewTitle">참가자<span id="crewCount"></span></h2><span class="status" id="crewNote">이름을 누르면 왕복 항공편을 볼 수 있습니다.</span></div>
     <ul class="members" id="members"></ul>
+  </section>
+  <section class="hotel" aria-labelledby="hotelTitle">
+    <div class="crew-head"><h2 id="hotelTitle">숙소</h2></div>
+    <div class="hotel-card" id="hotelCard"></div>
   </section>
   <div id="days"></div>
 </div></main>
@@ -162,6 +185,11 @@ ul.members{list-style:none;margin:0;padding:0;display:grid;grid-template-columns
       <label for="m-from">합류일<select id="m-from"></select></label>
       <label for="m-to">귀국일<select id="m-to"></select></label>
     </div>
+    <div class="grid2">
+      <label for="m-out">가는 편 편명<input id="m-out" maxlength="12" placeholder="예: OZ741"></label>
+      <label for="m-ret">오는 편 편명<input id="m-ret" maxlength="12" placeholder="예: OZ742"></label>
+    </div>
+    <label class="check" for="m-local"><input id="m-local" type="checkbox">현지 합류 (항공편 없음)</label>
     <label for="m-note">비고<input id="m-note" maxlength="60" placeholder="예: 목 저녁 출발"></label>
     <div class="err" id="merr" hidden></div>
     <div class="actions">
@@ -170,9 +198,16 @@ ul.members{list-style:none;margin:0;padding:0;display:grid;grid-template-columns
     </div>
   </form>
 </div>
+<div class="sheet" id="fsheet" role="dialog" aria-modal="true" aria-labelledby="fsheetTitle" hidden>
+  <div class="wrap">
+    <h3 id="fsheetTitle"></h3>
+    <div class="fl" id="flBody"></div>
+    <div class="actions"><span></span><div><button type="button" class="btn" id="fedit" hidden>정보 수정</button><button type="button" class="btn primary" id="fclose">닫기</button></div></div>
+  </div>
+</div>
 <div class="saving" id="saving" hidden>저장 중…</div>
 
-<script type="application/json" id="data">{"items": [{"id": "d2a", "day": "2027-01-21", "time": "09:00", "title": "왕궁 · 왓 프라깨우", "cat": "관광", "place": "방콕 구시가지(라따나꼬신)", "note": "복장 규정: 긴 바지, 어깨 가리는 상의", "tbd": false, "order": 1}, {"id": "d2b", "day": "2027-01-21", "time": "11:30", "title": "왓 포", "cat": "관광", "place": "왕궁 남쪽 도보권", "note": "", "tbd": false, "order": 2}, {"id": "d2c", "day": "2027-01-21", "time": "13:00", "title": "점심", "cat": "식사", "place": "", "note": "", "tbd": true, "order": 3}, {"id": "d2d", "day": "2027-01-21", "time": "17:30", "title": "왓 아룬 일몰 · 짜오프라야 강 디너 크루즈", "cat": "관광", "place": "짜오프라야 강", "note": "크루즈 예약 필요", "tbd": true, "order": 4}, {"id": "d3a", "day": "2027-01-22", "time": "", "title": "골프 라운딩", "cat": "골프", "place": "", "note": "골프장·티타임 미정", "tbd": true, "order": 1}, {"id": "d3b", "day": "2027-01-22", "time": "19:00", "title": "저녁 식사", "cat": "식사", "place": "", "note": "", "tbd": true, "order": 2}, {"id": "d4a", "day": "2027-01-23", "time": "", "title": "자유 일정 / 시장·쇼핑", "cat": "자유", "place": "", "note": "후보: 짜뚜짝 주말시장(토·일), 아이콘시암", "tbd": true, "order": 1}, {"id": "d4b", "day": "2027-01-23", "time": "19:00", "title": "마지막 밤 만찬", "cat": "식사", "place": "", "note": "", "tbd": true, "order": 2}, {"id": "d1a", "day": "2027-01-20", "time": "15:05", "title": "인천공항 제2여객터미널 집결", "cat": "이동", "place": "인천국제공항 T2 · 아시아나 체크인 카운터", "note": "출발 3시간 전 집결 권장, 체크인 마감은 출발 1시간 전(17:05)\n여권 유효기간 6개월 이상 확인\n태국 디지털 입국카드(TDAC) 입국 3일 전부터 tdac.immigration.go.th 에서 무료 작성", "tbd": false, "order": 1}, {"id": "d1b", "day": "2027-01-20", "time": "18:05", "title": "OZ741 인천 출발 → 방콕", "cat": "이동", "place": "인천 T2 → 수완나품(BKK)", "note": "아시아나 OZ741 · 비행 약 5시간 55분 · 현지 도착 22:00(한국시간 24:00)\n기종 A380/A330 (운항 스케줄에 따라 변경 가능)\n방콕은 한국보다 2시간 느림", "tbd": false, "order": 2}, {"id": "d1c", "day": "2027-01-20", "time": "22:00", "title": "수완나품 공항 도착 · 입국심사 · 호텔 이동", "cat": "이동", "place": "수완나품 국제공항", "note": "현지 차량(밴) 픽업 수배 필요", "tbd": true, "order": 3}, {"id": "d1d", "day": "2027-01-20", "time": "23:30", "title": "호텔 체크인 · 휴식", "cat": "숙소", "place": "", "note": "호텔 미정 · 늦은 도착이라 예약 시 도착 시간 미리 알림", "tbd": true, "order": 4}, {"id": "d5a", "day": "2027-01-24", "time": "12:00", "title": "호텔 체크아웃 · 짐 보관", "cat": "숙소", "place": "", "note": "밤 비행기라 레이트 체크아웃 또는 객실 1~2개 연장 검토", "tbd": true, "order": 1}, {"id": "d5c", "day": "2027-01-24", "time": "", "title": "오후 자유 일정 / 마사지", "cat": "자유", "place": "", "note": "", "tbd": true, "order": 2}, {"id": "d5d", "day": "2027-01-24", "time": "18:30", "title": "저녁 식사", "cat": "식사", "place": "", "note": "", "tbd": true, "order": 3}, {"id": "d5e", "day": "2027-01-24", "time": "20:55", "title": "수완나품 공항 도착 · 체크인", "cat": "이동", "place": "수완나품 국제공항 · 아시아나 카운터", "note": "출발 3시간 전 도착 권장, 체크인 마감은 출발 1시간 전(22:55)\n시내→공항 교통체증 감안해 호텔에서 19:30 전후 출발", "tbd": true, "order": 4}, {"id": "d5b", "day": "2027-01-24", "time": "23:55", "title": "OZ742 방콕 출발 → 인천", "cat": "이동", "place": "수완나품(BKK) → 인천 T2", "note": "아시아나 OZ742 · 비행 약 5시간 · 인천 도착 1/25(월) 06:55\n기종 A330-300 (운항 스케줄에 따라 변경 가능)", "tbd": false, "order": 5}], "members": [{"id": "m01", "no": 1, "name": "이광준", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m02", "no": 2, "name": "박민주", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m03", "no": 3, "name": "정정길", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m04", "no": 4, "name": "양병열", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m05", "no": 5, "name": "이락승", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m06", "no": 6, "name": "최익준", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m07", "no": 7, "name": "박병희", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m08", "no": 8, "name": "김한모", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m09", "no": 9, "name": "남은오", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m10", "no": 10, "name": "유용문", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m11", "no": 11, "name": "박상균", "from": "2027-01-21", "to": "2027-01-23", "note": "목출토출"}, {"id": "m12", "no": 12, "name": "박수범", "from": "2027-01-21", "to": "2027-01-23", "note": "목출토출"}, {"id": "m13", "no": 13, "name": "임성묵", "from": "2027-01-21", "to": "2027-01-24", "note": "목 저녁 출발"}, {"id": "m14", "no": 14, "name": "김유범", "from": "2027-01-21", "to": "2027-01-24", "note": "목 저녁 출발"}, {"id": "m15", "no": 15, "name": "나병관", "from": "2027-01-23", "to": "2027-01-24", "note": "방콕 현지 거주"}], "updatedAt": "2026-11-02T23:50:24.317676+00:00"}</script>
+<script type="application/json" id="data">{"items": [{"id": "d1a", "day": "2027-01-20", "time": "15:05", "title": "인천공항 제2여객터미널 집결", "cat": "이동", "place": "인천국제공항 T2 · 아시아나 체크인 카운터", "note": "출발 3시간 전 집결 권장, 체크인 마감은 출발 1시간 전(17:05)\n여권 유효기간 6개월 이상 확인\n태국 디지털 입국카드(TDAC) 입국 3일 전부터 tdac.immigration.go.th 에서 무료 작성", "tbd": false, "order": 1}, {"id": "d1b", "day": "2027-01-20", "time": "18:05", "title": "OZ741 인천 출발 → 방콕", "cat": "이동", "place": "인천 T2 → 수완나품(BKK)", "note": "아시아나 OZ741 · 비행 약 5시간 55분 · 현지 도착 22:00(한국시간 24:00)\n기종 A380/A330 (운항 스케줄에 따라 변경 가능)\n방콕은 한국보다 2시간 느림", "tbd": false, "order": 2}, {"id": "d1c", "day": "2027-01-20", "time": "22:00", "title": "수완나품 공항 도착 · 입국심사 · 호텔 이동", "cat": "이동", "place": "수완나품 국제공항", "note": "공항→호텔 차량 약 20분\n호텔 무료 셔틀은 07:00~19:00 운영이라 밤 도착 시 밴 별도 수배 필요", "tbd": true, "order": 3}, {"id": "d1d", "day": "2027-01-20", "time": "23:30", "title": "호텔 체크인", "cat": "숙소", "place": "이스틴 타나시티 골프 리조트", "note": "체크인 14:00부터, 자정(24:00)까지 가능 · 늦은 도착이라 도착 시간 호텔에 미리 알림", "tbd": false, "order": 4}, {"id": "d5a", "day": "2027-01-24", "time": "12:00", "title": "호텔 체크아웃 · 짐 보관", "cat": "숙소", "place": "이스틴 타나시티 골프 리조트", "note": "체크아웃 12:00 · 밤 비행기라 레이트 체크아웃 또는 객실 1~2개 연장 검토", "tbd": true, "order": 1}, {"id": "d5e", "day": "2027-01-24", "time": "20:55", "title": "수완나품 공항 도착 · 체크인", "cat": "이동", "place": "수완나품 국제공항 · 아시아나 카운터", "note": "출발 3시간 전 도착 권장, 체크인 마감은 출발 1시간 전(22:55)\n호텔→공항 약 20분 · 20:15 전후 호텔 출발\n호텔 무료 셔틀은 19:00까지라 이 시간엔 차량 별도 수배", "tbd": true, "order": 4}, {"id": "d5b", "day": "2027-01-24", "time": "23:55", "title": "OZ742 방콕 출발 → 인천", "cat": "이동", "place": "수완나품(BKK) → 인천 T2", "note": "아시아나 OZ742 · 비행 약 5시간 · 인천 도착 1/25(월) 06:55\n기종 A330-300 (운항 스케줄에 따라 변경 가능)", "tbd": false, "order": 5}], "members": [{"id": "m01", "no": 1, "name": "이광준", "from": "2027-01-20", "to": "2027-01-24", "note": "", "out": "OZ741", "ret": "OZ742", "local": false}, {"id": "m02", "no": 2, "name": "박민주", "from": "2027-01-20", "to": "2027-01-24", "note": "", "out": "OZ741", "ret": "OZ742", "local": false}, {"id": "m03", "no": 3, "name": "정정길", "from": "2027-01-20", "to": "2027-01-24", "note": "", "out": "OZ741", "ret": "OZ742", "local": false}, {"id": "m04", "no": 4, "name": "양병열", "from": "2027-01-20", "to": "2027-01-24", "note": "", "out": "OZ741", "ret": "OZ742", "local": false}, {"id": "m05", "no": 5, "name": "이락승", "from": "2027-01-20", "to": "2027-01-24", "note": "", "out": "OZ741", "ret": "OZ742", "local": false}, {"id": "m06", "no": 6, "name": "최익준", "from": "2027-01-20", "to": "2027-01-24", "note": "", "out": "OZ741", "ret": "OZ742", "local": false}, {"id": "m07", "no": 7, "name": "박병희", "from": "2027-01-20", "to": "2027-01-24", "note": "", "out": "OZ741", "ret": "OZ742", "local": false}, {"id": "m08", "no": 8, "name": "김한모", "from": "2027-01-20", "to": "2027-01-24", "note": "", "out": "OZ741", "ret": "OZ742", "local": false}, {"id": "m09", "no": 9, "name": "남은오", "from": "2027-01-20", "to": "2027-01-24", "note": "", "out": "OZ741", "ret": "OZ742", "local": false}, {"id": "m10", "no": 10, "name": "유용문", "from": "2027-01-20", "to": "2027-01-24", "note": "", "out": "OZ741", "ret": "OZ742", "local": false}, {"id": "m11", "no": 11, "name": "박상균", "from": "2027-01-21", "to": "2027-01-23", "note": "목출토출", "out": "", "ret": "", "local": false}, {"id": "m12", "no": 12, "name": "박수범", "from": "2027-01-21", "to": "2027-01-23", "note": "목출토출", "out": "", "ret": "", "local": false}, {"id": "m13", "no": 13, "name": "임성묵", "from": "2027-01-21", "to": "2027-01-24", "note": "목 저녁 출발", "out": "", "ret": "OZ742", "local": false}, {"id": "m14", "no": 14, "name": "김유범", "from": "2027-01-21", "to": "2027-01-24", "note": "목 저녁 출발", "out": "", "ret": "OZ742", "local": false}, {"id": "m15", "no": 15, "name": "나병관", "from": "2027-01-23", "to": "2027-01-24", "note": "방콕 현지 거주", "out": "", "ret": "", "local": true}], "updatedAt": "2026-11-02T23:54:00.327182+00:00", "flights": {"OZ741": {"no": "OZ741", "airline": "아시아나항공", "date": "1/20(수)", "dep": "인천 T2 18:05", "arr": "방콕 수완나품 22:00 (현지)", "det": "비행 약 5시간 55분 · A380/A330\n15:05 인천공항 T2 집결 · 체크인 마감 17:05"}, "OZ742": {"no": "OZ742", "airline": "아시아나항공", "date": "1/24(일)", "dep": "방콕 수완나품 23:55 (현지)", "arr": "인천 T2 1/25(월) 06:55", "det": "비행 약 5시간 · A330-300\n20:55 공항 도착 · 체크인 마감 22:55"}}, "hotel": {"name": "이스틴 타나시티 골프 리조트", "en": "Eastin Thana City Golf Resort Bangkok", "facts": [["주소", "104 Moo 4, Bangna-Trad Rd. KM 14, Bang Chalong, Bang Phli, Samut Prakan 10540"], ["전화", "+66 2 172 2333"], ["위치", "수완나품 공항에서 차량 약 20분 · 방콕 시내까지 약 25~40분(교통 상황에 따라)"], ["체크인/아웃", "체크인 14:00~24:00 · 체크아웃 12:00"], ["공항 셔틀", "무료 · 07:00~19:00 정해진 시간 운행 (사전 예약 확인)"], ["골프장", "타나시티 컨트리클럽 · 그렉 노먼 설계 18홀 파72 (6,966야드) · 아일랜드 그린 4개 · 드라이빙 레인지"], ["부대시설", "야외 수영장 · 피트니스 · 레스토랑(Splash 06:00~22:00, Shark Bite) · 바/라운지"], ["객실", "슈페리어(32㎡) · 골프코스뷰 · 1베드룸 스위트(64㎡) 등 · 조식 별도 여부 예약 조건 확인"]], "links": [["구글 지도", "https://www.google.com/maps/search/?api=1&query=Eastin+Thana+City+Golf+Resort+Bangkok"], ["호텔 홈페이지", "http://www.eastinthanacitygolfbangkok.com/"]]}}</script>
 <script>
 const TEMPLATE=document.body.innerHTML;
 const DAYS=[["2027-01-20","1/20","수","출발"],["2027-01-21","1/21","목",""],["2027-01-22","1/22","금",""],["2027-01-23","1/23","토",""],["2027-01-24","1/24","일","귀국"]];
@@ -191,7 +226,7 @@ function start(){
     if(ok){artifactNs=await claude.use("artifact");canWrite=!!artifactNs;renderAll();}
   })();
 }
-function renderAll(){renderTabs();renderMembers();render();
+function renderAll(){renderTabs();renderMembers();renderHotel();render();
   const n=S.items.filter(x=>x.tbd).length;
   $("status").textContent=`일정 ${S.items.length}개${n?` · 미정 ${n}개`:""}`+(S.updatedAt?` · ${new Date(S.updatedAt).toLocaleDateString("ko-KR",{month:"numeric",day:"numeric"})} 수정`:"");
 }
@@ -235,13 +270,13 @@ const dayLabel=k=>{const d=DAYS.find(x=>x[0]===k);return d?`${d[1]}(${d[2]})`:""
 function partial(m){const p=[];if((m.from||DAYS[0][0])!==DAYS[0][0])p.push(dayLabel(m.from)+" 합류");if((m.to||DAYS[4][0])!==DAYS[4][0])p.push(dayLabel(m.to)+" 귀국");return p.join(" · ");}
 function renderMembers(){
   const ul=$("members");ul.innerHTML="";const list=[...S.members].sort((a,b)=>(a.no||99)-(b.no||99));
-  $("crewCount").textContent=`${list.length}명`;$("crewNote").hidden=!canWrite;
-  list.forEach(m=>{const li=document.createElement("li");li.className="mem"+(canWrite?" edit":"");
+  $("crewCount").textContent=`${list.length}명`;
+  list.forEach(m=>{const li0=document.createElement("li");const li=document.createElement("button");li.type="button";li.className="mem";li0.appendChild(li);
     li.innerHTML=`<span class="no"></span><span><span class="nm"></span> <span class="pt"></span></span>`;
     li.querySelector(".no").textContent=m.no||"";li.querySelector(".nm").textContent=m.name;
     li.querySelector(".pt").textContent=[partial(m),m.note].filter(Boolean).join(" · ");
-    if(canWrite){li.tabIndex=0;li.onclick=()=>openM(m);li.onkeydown=e=>{if(e.key==="Enter")openM(m)};}
-    ul.appendChild(li);});
+    li.onclick=()=>openF(m);
+    ul.appendChild(li0);});
   if(canWrite){const li=document.createElement("li");const b=document.createElement("button");b.type="button";b.className="mem add-mem";b.style.width="100%";b.textContent="+ 참가자 추가";b.onclick=()=>openM(null);li.appendChild(b);ul.appendChild(li);}
 }
 
@@ -272,7 +307,7 @@ $("m-from").innerHTML=dayOpts;$("m-to").innerHTML=dayOpts;
 const uid=()=>Math.random().toString(36).slice(2,9);
 function arm(btn){if(btn.dataset.armed){return true}btn.dataset.armed="1";btn.classList.add("armed");btn.textContent="한 번 더 누르면 삭제";return false}
 function disarm(btn){delete btn.dataset.armed;btn.classList.remove("armed");btn.textContent="삭제"}
-function closeAll(){$("scrim").hidden=true;$("sheet").hidden=true;$("msheet").hidden=true;editing=null;medit=null;}
+function closeAll(){$("scrim").hidden=true;$("sheet").hidden=true;$("msheet").hidden=true;$("fsheet").hidden=true;editing=null;medit=null;}
 $("cancel").onclick=closeAll;$("mcancel").onclick=closeAll;$("scrim").onclick=closeAll;
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeAll()});
 
@@ -292,16 +327,37 @@ $("del").onclick=async()=>{if(!arm($("del")))return;const prev=S.items;S.items=S
 
 function openM(m){
   medit=m;disarm($("mdel"));$("merr").hidden=true;$("msheetTitle").textContent=m?"참가자 수정":"참가자 추가";
-  $("m-no").value=m?.no||(S.members.length+1);$("m-name").value=m?.name||"";$("m-from").value=m?.from||DAYS[0][0];$("m-to").value=m?.to||DAYS[4][0];$("m-note").value=m?.note||"";
+  $("m-no").value=m?.no||(S.members.length+1);$("m-name").value=m?.name||"";$("m-from").value=m?.from||DAYS[0][0];$("m-to").value=m?.to||DAYS[4][0];$("m-note").value=m?.note||"";$("m-out").value=m?.out||"";$("m-ret").value=m?.ret||"";$("m-local").checked=!!m?.local;
   $("mdel").hidden=!m;$("scrim").hidden=false;$("msheet").hidden=false;setTimeout(()=>$("m-name").focus(),30);
 }
 $("mform").addEventListener("submit",async e=>{
   e.preventDefault();const name=$("m-name").value.trim();if(!name)return;
   const from=$("m-from").value,to=$("m-to").value;if(to<from){$("merr").hidden=false;$("merr").textContent="귀국일이 합류일보다 빠릅니다.";return;}
-  const data={id:medit?.id||uid(),no:Number($("m-no").value)||S.members.length+1,name,from,to,note:$("m-note").value.trim()};
+  const data={id:medit?.id||uid(),no:Number($("m-no").value)||S.members.length+1,name,from,to,note:$("m-note").value.trim(),out:$("m-out").value.trim().toUpperCase(),ret:$("m-ret").value.trim().toUpperCase(),local:$("m-local").checked};
   const prev=S.members;S.members=medit?S.members.map(m=>m.id===medit.id?data:m):[...S.members,data];
   if(!await save($("merr")))S.members=prev;
 });
 $("mdel").onclick=async()=>{if(!arm($("mdel")))return;const prev=S.members;S.members=S.members.filter(m=>m.id!==medit.id);if(!await save($("merr")))S.members=prev;};
+
+function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function renderHotel(){
+  const h=S.hotel,el=$("hotelCard");if(!h){el.parentElement.hidden=true;return}
+  const rows=h.facts.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("");
+  el.innerHTML=`<h3>${esc(h.name)}</h3><div class="sub">${esc(h.en)}</div><dl class="facts">${rows}</dl><div>${(h.links||[]).map(l=>`<a href="${esc(l[1])}" target="_blank" rel="noopener">${esc(l[0])} ↗</a>`).join(" &nbsp; ")}</div>`;
+}
+function legHtml(label,code,day){
+  const f=code&&S.flights?.[code];
+  if(!f)return `<div class="leg none"><span class="lab">${label}</span><span class="no">${code?esc(code):"항공편 미정"}</span><span class="det">${esc(dayLabel(day))}${code?"":" 예정 · 확정되면 반영"}</span></div>`;
+  return `<div class="leg"><span class="lab">${label} · ${esc(f.date)}</span><span class="no">${esc(f.no)} <span style="font-size:13px;color:var(--muted)">${esc(f.airline)}</span></span><span class="route">${esc(f.dep)} → ${esc(f.arr)}</span><span class="det">${esc(f.det)}</span></div>`;
+}
+let fmem=null;
+function openF(m){
+  fmem=m;$("fsheetTitle").textContent=`${m.name} 님 왕복 항공편`;
+  const local=m.local;
+  $("flBody").innerHTML=local?`<div class="leg none"><span class="lab">항공편</span><span class="no">해당 없음</span><span class="det">${esc(m.note||"현지 합류")} · ${esc(dayLabel(m.from))}~${esc(dayLabel(m.to))} 참석</span></div>`
+    :legHtml("가는 편",m.out,m.from)+legHtml("오는 편",m.ret,m.to)+(m.note?`<div class="status">비고: ${esc(m.note)}</div>`:"");
+  $("fedit").hidden=!canWrite;$("scrim").hidden=false;$("fsheet").hidden=false;setTimeout(()=>$("fclose").focus(),30);
+}
+$("fclose").onclick=closeAll;$("fedit").onclick=()=>{const m=fmem;$("fsheet").hidden=true;openM(m)};
 </script>
 <script>start();</script></body></html>
