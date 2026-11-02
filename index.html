@@ -102,6 +102,10 @@ dl.facts dd{margin:0;min-width:0;overflow-wrap:anywhere}
 .leg .route{font-variant-numeric:tabular-nums;font-size:15px}
 .leg .det{font-size:13px;color:var(--muted);white-space:pre-wrap}
 .leg.none .no{color:var(--marigold);font-family:var(--body);font-size:15px;font-weight:600}
+nav.days .wrap{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding-block:10px}
+.tab{flex:none;width:100%;padding:8px 2px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}
+.tab b{font-family:var(--body);font-weight:600;font-size:14px}
+.tab[aria-selected="true"]{border-color:var(--ink)}
 .crew{display:grid;gap:10px}
 .crew-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
 .crew-head h2{font-family:var(--display);font-size:20px;margin:0}
@@ -139,6 +143,7 @@ ul.members{list-style:none;margin:0;padding:0;display:grid;grid-template-columns
     <div class="legend" id="legend"></div>
     <span class="status" id="status"></span>
   </div>
+  <div id="days"></div>
   <section class="crew" aria-labelledby="crewTitle">
     <div class="crew-head"><h2 id="crewTitle">참가자<span id="crewCount"></span></h2><span class="status" id="crewNote">이름을 누르면 왕복 항공편을 볼 수 있습니다.</span></div>
     <ul class="members" id="members"></ul>
@@ -147,7 +152,6 @@ ul.members{list-style:none;margin:0;padding:0;display:grid;grid-template-columns
     <div class="crew-head"><h2 id="hotelTitle">숙소</h2></div>
     <div class="hotel-card" id="hotelCard"></div>
   </section>
-  <div id="days"></div>
 </div></main>
 </div>
 
@@ -214,7 +218,8 @@ const DAYS=[["2027-01-20","1/20","수","출발"],["2027-01-21","1/21","목",""],
 const CATS=["이동","식사","관광","골프","숙소","자유"];
 const $=id=>document.getElementById(id);
 let S=null,KEY=null,canWrite=false,artifactNs=null,sel="all",editing=null,medit=null;
-try{sel=localStorage.getItem("mjr-tab")||"all"}catch(e){}
+try{sel=localStorage.getItem("mjr-tab")}catch(e){}
+if(!DAYS.some(d=>d[0]===sel)){const td=new Date();const k=`${td.getFullYear()}-${String(td.getMonth()+1).padStart(2,"0")}-${String(td.getDate()).padStart(2,"0")}`;sel=DAYS.some(d=>d[0]===k)?k:DAYS[0][0];}
 S=JSON.parse($("data").textContent);
 function start(){
   {const n=new Date(),s=new Date(2027,0,20);n.setHours(0,0,0,0);const d=Math.round((s-n)/864e5);$("dday").textContent=d>0?`D-${d}`:d===0?"D-DAY":"여행 중/종료";}
@@ -232,7 +237,7 @@ function renderAll(){renderTabs();renderMembers();renderHotel();render();
 }
 function renderTabs(){
   const t=$("tabs");t.innerHTML="";
-  [["all","전체","5일"],...DAYS.map((d,i)=>[d[0],d[1],`${i+1}일차 ${d[2]}`])].forEach(([k,a,b])=>{
+  DAYS.map((d,i)=>[d[0],`${i+1}일차`,`${d[1]} ${d[2]}`]).forEach(([k,a,b])=>{
     const el=document.createElement("button");el.className="tab";el.type="button";el.setAttribute("role","tab");
     el.setAttribute("aria-selected",String(sel===k));el.innerHTML=`<b></b><small></small>`;
     el.querySelector("b").textContent=a;el.querySelector("small").textContent=b;
