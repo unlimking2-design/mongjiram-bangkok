@@ -112,16 +112,8 @@ ul.members{list-style:none;margin:0;padding:0;display:grid;grid-template-columns
   <div class="meta"><span>2027. 1. 20 (수) – 1. 24 (일) · 4박 5일</span><span class="dday" id="dday"></span></div>
 </div></header>
 
-<div class="wrap" id="lockWrap">
-  <form class="lock" id="lockForm">
-    <p>일정표를 보려면 비밀번호를 입력해 주세요.</p>
-    <label for="pw">비밀번호<input id="pw" type="password" inputmode="numeric" autocomplete="off" required></label>
-    <button class="btn primary" type="submit">열기</button>
-    <div class="err" id="pwErr" hidden>비밀번호가 맞지 않습니다.</div>
-  </form>
-</div>
 
-<div id="app" hidden>
+<div id="app">
 <nav class="days" aria-label="날짜"><div class="wrap" role="tablist" id="tabs"></div></nav>
 <main><div class="wrap">
   <div class="toolbar">
@@ -180,7 +172,7 @@ ul.members{list-style:none;margin:0;padding:0;display:grid;grid-template-columns
 </div>
 <div class="saving" id="saving" hidden>저장 중…</div>
 
-<script type="application/json" id="vault">{"salt": "LLIWVdG7s83H57IRWlhHuQ==", "iter": 200000, "iv": "d65J8jszJzFdUFk7", "ct": "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"}</script>
+<script type="application/json" id="data">{"items": [{"id": "d1a", "day": "2027-01-20", "time": "", "title": "인천공항 출발", "cat": "이동", "place": "인천국제공항", "note": "항공편·집결 시간 확정 후 입력", "tbd": true, "order": 1}, {"id": "d1b", "day": "2027-01-20", "time": "", "title": "수완나품 공항 도착 · 호텔 이동", "cat": "이동", "place": "수완나품 국제공항", "note": "차량(밴) 픽업 여부 확인", "tbd": true, "order": 2}, {"id": "d1c", "day": "2027-01-20", "time": "", "title": "호텔 체크인", "cat": "숙소", "place": "", "note": "호텔 미정", "tbd": true, "order": 3}, {"id": "d1d", "day": "2027-01-20", "time": "19:30", "title": "환영 만찬", "cat": "식사", "place": "", "note": "", "tbd": true, "order": 4}, {"id": "d2a", "day": "2027-01-21", "time": "09:00", "title": "왕궁 · 왓 프라깨우", "cat": "관광", "place": "방콕 구시가지(라따나꼬신)", "note": "복장 규정: 긴 바지, 어깨 가리는 상의", "tbd": false, "order": 1}, {"id": "d2b", "day": "2027-01-21", "time": "11:30", "title": "왓 포", "cat": "관광", "place": "왕궁 남쪽 도보권", "note": "", "tbd": false, "order": 2}, {"id": "d2c", "day": "2027-01-21", "time": "13:00", "title": "점심", "cat": "식사", "place": "", "note": "", "tbd": true, "order": 3}, {"id": "d2d", "day": "2027-01-21", "time": "17:30", "title": "왓 아룬 일몰 · 짜오프라야 강 디너 크루즈", "cat": "관광", "place": "짜오프라야 강", "note": "크루즈 예약 필요", "tbd": true, "order": 4}, {"id": "d3a", "day": "2027-01-22", "time": "", "title": "골프 라운딩", "cat": "골프", "place": "", "note": "골프장·티타임 미정", "tbd": true, "order": 1}, {"id": "d3b", "day": "2027-01-22", "time": "19:00", "title": "저녁 식사", "cat": "식사", "place": "", "note": "", "tbd": true, "order": 2}, {"id": "d4a", "day": "2027-01-23", "time": "", "title": "자유 일정 / 시장·쇼핑", "cat": "자유", "place": "", "note": "후보: 짜뚜짝 주말시장(토·일), 아이콘시암", "tbd": true, "order": 1}, {"id": "d4b", "day": "2027-01-23", "time": "19:00", "title": "마지막 밤 만찬", "cat": "식사", "place": "", "note": "", "tbd": true, "order": 2}, {"id": "d5a", "day": "2027-01-24", "time": "", "title": "호텔 체크아웃", "cat": "숙소", "place": "", "note": "", "tbd": true, "order": 1}, {"id": "d5b", "day": "2027-01-24", "time": "", "title": "수완나품 공항 출발 · 귀국", "cat": "이동", "place": "수완나품 국제공항", "note": "귀국편 확정 후 입력", "tbd": true, "order": 2}], "members": [{"id": "m01", "no": 1, "name": "이광준", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m02", "no": 2, "name": "박민주", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m03", "no": 3, "name": "정정길", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m04", "no": 4, "name": "양병열", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m05", "no": 5, "name": "이락승", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m06", "no": 6, "name": "최익준", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m07", "no": 7, "name": "박병희", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m08", "no": 8, "name": "김한모", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m09", "no": 9, "name": "남은오", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m10", "no": 10, "name": "유용문", "from": "2027-01-20", "to": "2027-01-24", "note": ""}, {"id": "m11", "no": 11, "name": "박상균", "from": "2027-01-21", "to": "2027-01-23", "note": "목출토출"}, {"id": "m12", "no": 12, "name": "박수범", "from": "2027-01-21", "to": "2027-01-23", "note": "목출토출"}, {"id": "m13", "no": 13, "name": "임성묵", "from": "2027-01-21", "to": "2027-01-24", "note": "목 저녁 출발"}, {"id": "m14", "no": 14, "name": "김유범", "from": "2027-01-21", "to": "2027-01-24", "note": "목 저녁 출발"}, {"id": "m15", "no": 15, "name": "나병관", "from": "2027-01-23", "to": "2027-01-24", "note": "방콕 현지 거주"}], "updatedAt": "2026-11-02T23:46:52.532050+00:00"}</script>
 <script>
 const TEMPLATE=document.body.innerHTML;
 const DAYS=[["2027-01-20","1/20","수","출발"],["2027-01-21","1/21","목",""],["2027-01-22","1/22","금",""],["2027-01-23","1/23","토",""],["2027-01-24","1/24","일","귀국"]];
@@ -188,33 +180,10 @@ const CATS=["이동","식사","관광","골프","숙소","자유"];
 const $=id=>document.getElementById(id);
 let S=null,KEY=null,canWrite=false,artifactNs=null,sel="all",editing=null,medit=null;
 try{sel=localStorage.getItem("mjr-tab")||"all"}catch(e){}
-const VAULT=JSON.parse($("vault").textContent);
-const b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
-const b64e=u=>{let s="";u.forEach(b=>s+=String.fromCharCode(b));return btoa(s)};
-
-(function(){const t=new Date(),s=new Date(2027,0,20);t.setHours(0,0,0,0);const d=Math.round((s-t)/864e5);$("dday").textContent=d>0?`D-${d}`:d===0?"D-DAY":"여행 중/종료";})();
-
-async function deriveKey(pw){
-  const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveKey"]);
-  return crypto.subtle.deriveKey({name:"PBKDF2",salt:b64d(VAULT.salt),iterations:VAULT.iter,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["encrypt","decrypt"]);
-}
-async function unlock(pw){
-  const key=await deriveKey(pw);
-  const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64d(VAULT.iv)},key,b64d(VAULT.ct));
-  KEY=key;S=JSON.parse(new TextDecoder().decode(pt));
-}
-$("lockForm").addEventListener("submit",async e=>{
-  e.preventDefault();const pw=$("pw").value.trim();
-  try{await unlock(pw);try{sessionStorage.setItem("mjr-pw",pw)}catch(_){}start();}
-  catch(_){$("pwErr").hidden=false;$("pw").select();}
-});
-(async()=>{let pw=null;try{pw=sessionStorage.getItem("mjr-pw")}catch(_){}
-  if(pw){try{await unlock(pw);start();return;}catch(_){}}
-  $("pw").focus();
-})();
-
+S=JSON.parse($("data").textContent);
 function start(){
-  $("lockWrap").hidden=true;$("app").hidden=false;
+  {const n=new Date(),s=new Date(2027,0,20);n.setHours(0,0,0,0);const d=Math.round((s-n)/864e5);$("dday").textContent=d>0?`D-${d}`:d===0?"D-DAY":"여행 중/종료";}
+  
   $("legend").innerHTML=CATS.map(c=>`<span class="chip cat-${c}">${c}</span>`).join("");
   renderAll();
   (async()=>{
@@ -281,11 +250,9 @@ async function save(errEl){
   $("saving").hidden=false;
   try{
     S.updatedAt=new Date().toISOString();
-    const iv=crypto.getRandomValues(new Uint8Array(12));
-    const ct=new Uint8Array(await crypto.subtle.encrypt({name:"AES-GCM",iv},KEY,new TextEncoder().encode(JSON.stringify(S))));
-    const vault=JSON.stringify({salt:VAULT.salt,iter:VAULT.iter,iv:b64e(iv),ct:b64e(ct)});
+    const json=JSON.stringify(S).replace(/<\//g,"<\\/");
     const start=TEMPLATE.indexOf("<title>"),end=TEMPLATE.lastIndexOf("<\/script>")+9;
-    const content=TEMPLATE.slice(start,end).replace(/(<script type="application\/json" id="vault">)[\s\S]*?(<\/script>)/,(_,a,b)=>a+vault+b);
+    const content=TEMPLATE.slice(start,end).replace(/(<script type="application\/json" id="data">)[\s\S]*?(<\/script>)/,(_,a,b)=>a+json+b);
     const reset=document.head.querySelector("style")?.textContent||"";
     const html=`<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>${reset}</style></head><body>${content}</body></html>`;
     await artifactNs.publish(html);
@@ -337,5 +304,4 @@ $("mform").addEventListener("submit",async e=>{
 });
 $("mdel").onclick=async()=>{if(!arm($("mdel")))return;const prev=S.members;S.members=S.members.filter(m=>m.id!==medit.id);if(!await save($("merr")))S.members=prev;};
 </script>
-<!--page-end-->
-</body></html>
+<script>start();</script></body></html>
