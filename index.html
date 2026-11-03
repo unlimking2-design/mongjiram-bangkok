@@ -106,6 +106,18 @@ nav.days .wrap{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6p
 .tab{flex:none;width:100%;padding:8px 2px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}
 .tab b{font-family:var(--body);font-weight:600;font-size:14px}
 .tab[aria-selected="true"]{border-color:var(--ink)}
+.guide{display:grid;gap:10px}
+.gtabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.gtab{font:inherit;font-size:14px;font-weight:600;padding:10px 4px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.gtab[aria-expanded="true"]{background:var(--river);color:var(--river-ink);border-color:var(--river)}
+.gpanel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;gap:10px;font-size:14px}
+.gpanel h3{font-family:var(--display);font-size:17px;margin:0}
+.gpanel ul{margin:0;padding-left:18px;display:grid;gap:5px}
+.gpanel .src{font-size:12px;color:var(--muted)}
+.wx{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;text-align:center}
+.wx div{background:var(--bg);border-radius:6px;padding:8px 4px;display:grid;gap:2px}
+.wx b{font-family:var(--mono);font-size:20px;font-weight:500;font-variant-numeric:tabular-nums}
+.wx span{font-size:12px;color:var(--muted)}
 .crew{display:grid;gap:10px}
 .crew-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
 .crew-head h2{font-family:var(--display);font-size:20px;margin:0}
@@ -144,6 +156,50 @@ ul.members{list-style:none;margin:0;padding:0;display:grid;grid-template-columns
     <span class="status" id="status"></span>
   </div>
   <div id="days"></div>
+  <section class="guide" aria-label="여행 준비">
+    <div class="gtabs">
+      <button type="button" class="gtab" aria-expanded="false" aria-controls="g-wx">날씨</button>
+      <button type="button" class="gtab" aria-expanded="false" aria-controls="g-wear">옷차림</button>
+      <button type="button" class="gtab" aria-expanded="false" aria-controls="g-pack">챙길 것</button>
+    </div>
+    <div class="gpanel" id="g-wx" hidden>
+      <h3>1월 방콕 날씨</h3>
+      <div class="wx"><div><b>32°</b><span>낮 최고</span></div><div><b>22°</b><span>아침·밤 최저</span></div><div><b>1~2일</b><span>한 달 비 오는 날</span></div></div>
+      <ul>
+        <li>건기라 맑고 비가 거의 없습니다. 가끔 짧은 소나기 정도입니다.</li>
+        <li>한낮은 한국 한여름처럼 덥고 햇볕이 강합니다. 아침·저녁은 선선한 편입니다.</li>
+        <li>한국(영하권)과 기온 차가 30도 이상 납니다.</li>
+        <li>시차: 방콕이 한국보다 2시간 느립니다.</li>
+      </ul>
+      <div class="src">평년 기준이며 출발 1주 전 예보를 다시 확인하세요.</div>
+    </div>
+    <div class="gpanel" id="g-wear" hidden>
+      <h3>옷차림</h3>
+      <ul>
+        <li><b>낮:</b> 반팔, 린넨 셔츠, 반바지, 통풍 잘 되는 옷</li>
+        <li><b>저녁·실내:</b> 얇은 긴팔이나 가디건. 쇼핑몰·식당·차량 에어컨이 매우 셉니다.</li>
+        <li><b>골프:</b> 반팔 카라티, 골프 반바지 가능한 곳 많음. 모자, 쿨토시, 선글라스 필수</li>
+        <li><b>사원·왕궁 방문 시:</b> 민소매·짧은 반바지 입장 불가. 소매 있는 상의와 긴바지</li>
+        <li><b>출국 날 인천:</b> 한겨울이라 두꺼운 외투 필요. 인천공항 외투 보관 서비스를 이용하거나 가벼운 패딩을 가방에 접어 넣으세요.</li>
+        <li>편한 운동화나 샌들</li>
+      </ul>
+    </div>
+    <div class="gpanel" id="g-pack" hidden>
+      <h3>챙길 것</h3>
+      <ul>
+        <li><b>여권</b> (유효기간 6개월 이상 남았는지 확인)</li>
+        <li><b>태국 디지털 입국카드(TDAC)</b>: 입국 3일 전부터 tdac.immigration.go.th 에서 무료 작성</li>
+        <li><b>e티켓·호텔 예약 확인서</b> (휴대폰 캡처)</li>
+        <li><b>현금</b>: 태국 바트 일부 환전 + 해외 결제되는 카드</li>
+        <li><b>로밍 또는 eSIM</b></li>
+        <li><b>충전기·보조배터리</b>: 태국은 220V라 한국 플러그 대부분 그대로 사용. 납작한 구멍만 있는 곳 대비 멀티어댑터 1개. 보조배터리는 기내 휴대만 가능</li>
+        <li><b>골프용품</b>: 골프화, 장갑, 공, 모자, 선크림(SPF50), 쿨토시</li>
+        <li><b>상비약</b>: 소화제, 지사제, 진통제, 모기기피제, 평소 드시는 약</li>
+        <li>선글라스, 수영복(호텔 수영장)</li>
+      </ul>
+      <div class="src">주의: 태국은 전자담배 반입·사용이 금지돼 있어 벌금 대상입니다.</div>
+    </div>
+  </section>
   <section class="crew" aria-labelledby="crewTitle">
     <div class="crew-head"><h2 id="crewTitle">참가자<span id="crewCount"></span></h2><span class="status" id="crewNote">이름을 누르면 왕복 항공편을 볼 수 있습니다.</span></div>
     <ul class="members" id="members"></ul>
@@ -364,5 +420,11 @@ function openF(m){
   $("fedit").hidden=!canWrite;$("scrim").hidden=false;$("fsheet").hidden=false;setTimeout(()=>$("fclose").focus(),30);
 }
 $("fclose").onclick=closeAll;$("fedit").onclick=()=>{const m=fmem;$("fsheet").hidden=true;openM(m)};
+
+document.querySelectorAll(".gtab").forEach(b=>b.addEventListener("click",()=>{
+  const open=b.getAttribute("aria-expanded")!=="true";
+  document.querySelectorAll(".gtab").forEach(x=>{x.setAttribute("aria-expanded","false");$(x.getAttribute("aria-controls")).hidden=true});
+  if(open){b.setAttribute("aria-expanded","true");$(b.getAttribute("aria-controls")).hidden=false}
+}));
 </script>
 <script>start();</script></body></html>
