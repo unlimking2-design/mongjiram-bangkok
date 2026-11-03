@@ -106,8 +106,15 @@ nav.days .wrap{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6p
 .tab{flex:none;width:100%;padding:8px 2px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}
 .tab b{font-family:var(--body);font-weight:600;font-size:14px}
 .tab[aria-selected="true"]{border-color:var(--ink)}
+.fx{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:end}
+.fx label{font-size:12px}
+.fx input{font-family:var(--mono);font-size:18px;text-align:right}
+.fx .eq{font-family:var(--mono);color:var(--muted);padding-bottom:10px}
+.rate{font-size:15px}.rate b{font-family:var(--mono);font-size:22px;font-weight:500}
+.quick{display:flex;flex-wrap:wrap;gap:6px}
+.quick button{font:inherit;font-size:13px;font-family:var(--mono);border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:4px 10px;cursor:pointer}
 .guide{display:grid;gap:10px}
-.gtabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.gtabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .gtab{font:inherit;font-size:14px;font-weight:600;padding:10px 4px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
 .gtab[aria-expanded="true"]{background:var(--river);color:var(--river-ink);border-color:var(--river)}
 .gpanel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;gap:10px;font-size:14px}
@@ -161,6 +168,7 @@ ul.members{list-style:none;margin:0;padding:0;display:grid;grid-template-columns
       <button type="button" class="gtab" aria-expanded="false" aria-controls="g-wx">날씨</button>
       <button type="button" class="gtab" aria-expanded="false" aria-controls="g-wear">옷차림</button>
       <button type="button" class="gtab" aria-expanded="false" aria-controls="g-pack">챙길 것</button>
+      <button type="button" class="gtab" aria-expanded="false" aria-controls="g-fx">환율</button>
     </div>
     <div class="gpanel" id="g-wx" hidden>
       <h3>1월 방콕 날씨</h3>
@@ -198,6 +206,22 @@ ul.members{list-style:none;margin:0;padding:0;display:grid;grid-template-columns
         <li>선글라스, 수영복(호텔 수영장)</li>
       </ul>
       <div class="src">주의: 태국은 전자담배 반입·사용이 금지돼 있어 벌금 대상입니다.</div>
+    </div>
+    <div class="gpanel" id="g-fx" hidden>
+      <h3>바트 환율</h3>
+      <div class="rate">1바트 = <b id="fxRate">39.6</b>원</div>
+      <div class="src" id="fxAsOf">2026.11.2 한국수출입은행 매매기준율</div>
+      <div class="fx">
+        <label for="fx-thb">바트(฿)<input id="fx-thb" type="number" inputmode="decimal" min="0" value="1000"></label>
+        <span class="eq">=</span>
+        <label for="fx-krw">원(₩)<input id="fx-krw" type="number" inputmode="numeric" min="0"></label>
+      </div>
+      <div class="quick" id="fxQuick"></div>
+      <ul>
+        <li>카드 결제는 <b>바트(THB)로</b> 하세요. 원화·달러로 결제하면 3~8% 더 나옵니다.</li>
+        <li>현금은 달러·원화를 가져가 시내 환전소(슈퍼리치 등)에서 바꾸는 게 유리합니다.</li>
+        <li>은행에서 현금을 살 때는 위 기준율보다 몇 % 더 듭니다.</li>
+      </ul>
     </div>
   </section>
   <section class="crew" aria-labelledby="crewTitle">
@@ -426,5 +450,18 @@ document.querySelectorAll(".gtab").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll(".gtab").forEach(x=>{x.setAttribute("aria-expanded","false");$(x.getAttribute("aria-controls")).hidden=true});
   if(open){b.setAttribute("aria-expanded","true");$(b.getAttribute("aria-controls")).hidden=false}
 }));
+
+let FX=39.6;
+function fxFmt(n){return Math.round(n).toLocaleString("ko-KR")}
+function fxFromThb(){const v=parseFloat($("fx-thb").value);$("fx-krw").value=isFinite(v)?Math.round(v*FX):""}
+function fxFromKrw(){const v=parseFloat($("fx-krw").value);$("fx-thb").value=isFinite(v)?Math.round(v/FX*100)/100:""}
+$("fx-thb").addEventListener("input",fxFromThb);$("fx-krw").addEventListener("input",fxFromKrw);
+$("fxQuick").innerHTML=[100,500,1000,4600,10000].map(v=>`<button type="button" data-v="${v}">฿${v.toLocaleString()}</button>`).join("");
+$("fxQuick").addEventListener("click",e=>{const v=e.target.dataset?.v;if(v){$("fx-thb").value=v;fxFromThb()}});
+fxFromThb();
+fetch("https://open.er-api.com/v6/latest/THB").then(r=>r.json()).then(d=>{
+  const k=d?.rates?.KRW;if(!k)return;FX=k;$("fxRate").textContent=k.toFixed(1);
+  const t=new Date(d.time_last_update_unix*1000);$("fxAsOf").textContent=`${t.getMonth()+1}월 ${t.getDate()}일 시세 (자동 갱신)`;fxFromThb();
+}).catch(()=>{});
 </script>
 <script>start();</script></body></html>
